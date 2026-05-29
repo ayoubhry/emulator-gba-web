@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Easter Egg – Nintendo DS</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0a0f1a;
+      --surface: #111827;
+      --border:  #1f2d42;
+      --text:    #f1f5f9;
+      --text-2:  #94a3b8;
+      --accent:  #3b82f6;
+      --red:     #ef4444;
+      --r:       12px;
+      --r-lg:    20px;
+    }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: var(--bg); color: var(--text);
+      display: flex; align-items: center; justify-content: center;
+      height: 100vh; overflow: hidden;
+    }
+
+    /* ── Indice clavier (page de démo) ─────────────────── */
+    .hint-card {
+      text-align: center;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 2.5rem 3rem;
+      max-width: 480px;
+    }
+    .hint-card h2 { font-size: 1.3rem; margin-bottom: .5rem; }
+    .hint-card p  { font-size: .9rem; color: var(--text-2); line-height: 1.7; }
+
+    .konami-keys {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 6px; margin-top: 1.25rem;
+    }
+    .key {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--bg); border: 1.5px solid var(--border);
+      border-radius: 8px; padding: 5px 10px;
+      font-size: .78rem; font-weight: 700; color: var(--text-2);
+      min-width: 36px;
+    }
+    .key.highlight { border-color: var(--accent); color: var(--accent); }
+
+    /* Indicateur de progression Konami */
+    #konamiProgress {
+      display: flex; justify-content: center; gap: 5px;
+      margin-top: 1rem; height: 6px;
+    }
+    .kp-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--border);
+      transition: background .15s ease, transform .15s ease;
+    }
+    .kp-dot.active { background: var(--accent); transform: scale(1.4); }
+    .kp-dot.done   { background: #22c55e; }
+
+    /* ── Overlay DS ─────────────────────────────────────── */
+    #dsOverlay {
+      position: fixed; inset: 0;
+      background: rgba(2, 6, 23, 0.97);
+      backdrop-filter: blur(16px);
+      z-index: 9999;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    #dsOverlay.visible {
+      opacity: 1; pointer-events: all;
+    }
+
+    /* Barre du haut */
+    .ds-topbar {
+      width: 95vw; max-width: 1000px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .ds-label {
+      display: flex; align-items: center; gap: 10px;
+      font-size: .88rem; font-weight: 700; color: var(--text-2);
+    }
+    .ds-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 3px rgba(34,197,94,.2);
+      animation: pulse-dot 2s ease infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { box-shadow: 0 0 0 3px rgba(34,197,94,.2); }
+      50%      { box-shadow: 0 0 0 6px rgba(34,197,94,.05); }
+    }
+
+    .ds-close-btn {
+      background: rgba(239,68,68,.15);
+      border: 1.5px solid rgba(239,68,68,.35);
+      color: var(--red); border-radius: var(--r);
+      padding: 8px 18px; font-size: .85rem; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; gap: 8px;
+      transition: background .2s ease, border-color .2s ease;
+    }
+    .ds-close-btn:hover {
+      background: rgba(239,68,68,.25);
+      border-color: var(--red);
+    }
+
+    /* Iframe */
+    .ds-frame-wrap {
+      width: 95vw; max-width: 1000px;
+      height: calc(90vh - 60px);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0,0,0,.6);
+    }
+    #dsIframe {
+      width: 100%; height: 100%;
+      border: none; display: block;
+      background: #000;
+    }
+
+    /* ── Shortcut hint ──────────────────────────────────── */
+    .shortcut-hint {
+      margin-top: 1.5rem;
+      font-size: .78rem; color: var(--text-2);
+    }
+    .shortcut-hint kbd {
+      background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: 5px; padding: 2px 7px; font-size: .75rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Page de démo avec indice du code Konami -->
+  <div class="hint-card">
+    <h2>🎮 Easter Egg caché</h2>
+    <p>Tape la bonne combinaison au clavier pour débloquer un jeu Nintendo DS directement dans le navigateur.</p>
+
+    <div class="konami-keys">
+      <span class="key"><i class="fa-solid fa-arrow-up"></i></span>
+      <span class="key"><i class="fa-solid fa-arrow-up"></i></span>
+      <span class="key"><i class="fa-solid fa-arrow-down"></i></span>
+      <span class="key"><i class="fa-solid fa-arrow-down"></i></span>
+      <span class="key"><i class="fa-solid fa-arrow-left"></i></span>
+      <span class="key"><i class="fa-solid fa-arrow-right"></i></span>
+      <span class="key"><i class="fa-solid fa-arrow-left"></i></span>
+      <span class="key"><i class="fa-solid fa-arrow-right"></i></span>
+      <span class="key highlight">B</span>
+      <span class="key highlight">A</span>
+      <span class="key highlight">↵</span>
+    </div>
+
+    <div id="konamiProgress"></div>
+
+    <p class="shortcut-hint">
+      Dans le jeu : <kbd>F11</kbd> pour le plein écran &nbsp;·&nbsp; <kbd>Échap</kbd> pour fermer
+    </p>
+  </div>
+
+  <!-- Overlay plein écran avec l'émulateur -->
+  <div id="dsOverlay">
+    <div class="ds-topbar">
+      <div class="ds-label">
+        <span class="ds-dot"></span>
+        Nintendo DS Emulator — EmulatorJS
+      </div>
+      <button id="closeBtn" class="ds-close-btn">
+        <i class="fa-solid fa-power-off"></i>
+        Éteindre
+      </button>
+    </div>
+
+    <div class="ds-frame-wrap">
+      <iframe id="dsIframe" src="" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <script>
+    (function initEasterEgg() {
+      const KONAMI = [
+        'ArrowUp','ArrowUp','ArrowDown','ArrowDown',
+        'ArrowLeft','ArrowRight','ArrowLeft','ArrowRight',
+        'b','a','Enter'
+      ];
+
+      const overlay  = document.getElementById('dsOverlay');
+      const iframe   = document.getElementById('dsIframe');
+      const closeBtn = document.getElementById('closeBtn');
+      const progress = document.getElementById('konamiProgress');
+
+      // Construire les points d'indicateur
+      KONAMI.forEach(() => {
+        const dot = document.createElement('span');
+        dot.className = 'kp-dot';
+        progress.appendChild(dot);
+      });
+
+      let history = [];
+
+      function updateDots() {
+        const dots = progress.querySelectorAll('.kp-dot');
+        dots.forEach((dot, i) => {
+          dot.classList.toggle('active', i === history.length - 1);
+          dot.classList.toggle('done',   i < history.length - 1);
+        });
+      }
+
+      function resetDots() {
+        progress.querySelectorAll('.kp-dot').forEach(d => {
+          d.classList.remove('active','done');
+        });
+      }
+
+      // ── Écoute clavier ──────────────────────────────────
+      window.addEventListener('keydown', e => {
+        // Touche Échap : ferme l'overlay si ouvert
+        if (e.key === 'Escape' && overlay.classList.contains('visible')) {
+          closeOverlay();
+          return;
+        }
+        if (overlay.classList.contains('visible')) return;
+
+        const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+        history.push(key);
+        history = history.slice(-KONAMI.length);
+
+        updateDots();
+
+        if (KONAMI.every((k, i) => k === history[i])) {
+          openOverlay();
+          history = [];
+          resetDots();
+        }
+      });
+
+      // ── Ouvrir / fermer ──────────────────────────────────
+      function openOverlay() {
+        iframe.src = 'emulator.html';
+        overlay.classList.add('visible');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeOverlay() {
+        overlay.classList.remove('visible');
+        document.body.style.overflow = '';
+        // Coupe l'émulateur (audio + wasm) proprement
+        setTimeout(() => { iframe.src = ''; }, 350);
+      }
+
+      closeBtn.addEventListener('click', closeOverlay);
+    })();
+  </script>
+
+</body>
+</html>
