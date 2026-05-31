@@ -1,9 +1,10 @@
-/* ─── Variables d'état Globales ─── */
-let loadedRomUrl = null;
+/* ─── Variables d'état ─── */
+let loadedRomPath = null;
+let loadedRomName = null;
 let isEmulatorActive = false;
 
-/* ─── ROM chargée automatiquement au démarrage ───────────────────
-   Placez votre ROM dans le dossier Roms/ à la racine du dépôt.
+/* ─── ROM chargée automatiquement ───────────────────────────────
+   Placez votre ROM dans Roms/ à la racine du dépôt.
    Le nom du fichier doit correspondre exactement à AUTO_ROM.path.
    ─────────────────────────────────────────────────────────────── */
 const AUTO_ROM = {
@@ -11,7 +12,7 @@ const AUTO_ROM = {
   name: 'Pokémon — Version Émeraude',
 };
 
-/* ─── Captures des Éléments DOM ─── */
+/* ─── Éléments DOM ─── */
 const romInput       = document.getElementById('rom-input');
 const dropZone       = document.getElementById('drop-zone');
 const romInfoBox     = document.getElementById('rom-info');
@@ -19,12 +20,11 @@ const romNameDisplay = document.getElementById('rom-name');
 const bootOverlay    = document.getElementById('overlay');
 const powerLed       = document.getElementById('power-led');
 
-/* ─── Chargement automatique au démarrage de la page ─── */
+/* ─── Chargement automatique au démarrage ─── */
 window.addEventListener('DOMContentLoaded', autoLoadROM);
 
 async function autoLoadROM() {
   romNameDisplay.textContent = '⏳  Chargement de Pokémon Émeraude…';
-  romInfoBox.style.opacity = '1';
 
   try {
     const res = await fetch(AUTO_ROM.path);
@@ -35,24 +35,25 @@ async function autoLoadROM() {
       );
     }
 
-    const blob = await res.blob();
-
-    // Libération de l'éventuelle URL précédente
-    if (loadedRomUrl) URL.revokeObjectURL(loadedRomUrl);
-    loadedRomUrl = URL.createObjectURL(blob);
-
+    // On garde le chemin HTTP direct (pas de blob) pour compatibilité EmulatorJS
+    loadedRomPath = AUTO_ROM.path;
+    loadedRomName = AUTO_ROM.name;
     romNameDisplay.textContent = AUTO_ROM.name;
 
-    // Démarrage immédiat de l'émulateur sans interaction utilisateur
+    // Démarrage immédiat
     launchEmulator();
 
   } catch (err) {
     console.error('[GBA Emulator] Erreur de chargement automatique :', err);
     romNameDisplay.textContent = '❌  ' + err.message;
+
+    // En cas d'erreur (ex: file:// local), on ouvre la section "Changer de jeu"
+    const details = document.querySelector('details');
+    if (details) details.open = true;
   }
 }
 
-/* ─── Gestion de l'import manuel (fallback — changer de jeu) ─── */
+/* ─── Import manuel (glisser-déposer ou sélection de fichier) ─── */
 romInput.addEventListener('change', (e) => {
   if (e.target.files[0]) processFile(e.target.files[0]);
 });
@@ -75,21 +76,30 @@ dropZone.addEventListener('drop', (e) => {
 function processFile(file) {
   const extension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
   if (!['.gba', '.zip', '.7z'].includes(extension)) {
-    alert('Format non pris en charge. Veuillez importer une ROM au format .GBA ou compressée.');
+    alert('Format non pris en charge. Veuillez importer une ROM .GBA ou compressée.');
     return;
   }
 
-  if (loadedRomUrl) URL.revokeObjectURL(loadedRomUrl);
+  // Pour les fichiers locaux (drag & drop), un blob URL est nécessaire
+  if (loadedRomPath && loadedRomPath.startsWith('blob:')) {
+    URL.revokeObjectURL(loadedRomPath);
+  }
 
-  loadedRomUrl = URL.createObjectURL(file);
+  loadedRomPath = URL.createObjectURL(file);
+  loadedRomName = file.name;
   romNameDisplay.textContent = file.name;
-  romInfoBox.style.opacity = '1';
 }
 
-/* ─── Lancement de la machine virtuelle ─── */
+/* ─── Lancement de l'émulateur ─── */
 function launchEmulator() {
-  if (!loadedRomUrl) {
-    alert('Veuillez d\'abord ajouter un fichier de ROM valide.');
+  if (!loadedRomPath) {
+    alert('Veuillez d\'abord ajouter un fichier ROM valide.');
+    return;
+  }
+
+  // Si l'émulateur tourne déjà, on recharge la page proprement
+  if (isEmulatorActive) {
+    window.location.reload();
     return;
   }
 
@@ -102,33 +112,41 @@ function launchEmulator() {
   }, 2000);
 }
 
+/* ─── Démarrage du cœur EmulatorJS ─────────────────────────────
+   IMPORTANT : le loader.js ne doit être injecté QU'UNE SEULE FOIS,
+   APRÈS que toutes les variables window.EJS_* soient définies.
+   C'est pourquoi il n'y a PAS de <script loader.js> dans index.html.
+   ─────────────────────────────────────────────────────────────── */
 function startEmulatorCore() {
   isEmulatorActive = true;
 
+  // Suppression de l'écran de veille
   const idleScreen = document.getElementById('idle-screen');
   if (idleScreen) idleScreen.remove();
 
-  /* Config globale de l'API EmulatorJS */
+  /* ── Configuration de l'API EmulatorJS ── */
   window.EJS_player          = '#emulator-container';
   window.EJS_core            = 'mgba';
-  window.EJS_gameUrl         = loadedRomUrl;
+  window.EJS_gameUrl         = loadedRomPath;   // chemin HTTP ou blob URL
   window.EJS_pathtodata      = 'https://cdn.emulatorjs.org/stable/data/';
   window.EJS_startOnLoaded   = true;
   window.EJS_backgroundColor = '#0d1117';
 
+  /* Mapping clavier AZERTY */
   window.EJS_defaultControls = {
-    0: { value: 'KeyL' },      // Bouton A  → L
-    1: { value: 'KeyM' },      // Bouton B  → M
-    2: { value: 'ShiftLeft' }, // SELECT    → Maj Gauche
-    3: { value: 'Enter' },     // START     → Entrée
-    4: { value: 'KeyZ' },      // Haut      → Z
-    5: { value: 'KeyS' },      // Bas       → S
-    6: { value: 'KeyQ' },      // Gauche    → Q
-    7: { value: 'KeyD' },      // Droite    → D
-    8: { value: 'KeyI' },      // Gâchette L → I
-    9: { value: 'KeyP' },      // Gâchette R → P
+    0: { value: 'KeyL' },       // Bouton A  → L
+    1: { value: 'KeyM' },       // Bouton B  → M
+    2: { value: 'ShiftLeft' },  // SELECT    → Maj Gauche
+    3: { value: 'Enter' },      // START     → Entrée
+    4: { value: 'KeyZ' },       // Haut      → Z
+    5: { value: 'KeyS' },       // Bas       → S
+    6: { value: 'KeyQ' },       // Gauche    → Q
+    7: { value: 'KeyD' },       // Droite    → D
+    8: { value: 'KeyI' },       // Gâchette L → I
+    9: { value: 'KeyP' },       // Gâchette R → P
   };
 
+  /* Boutons de la barre EmulatorJS */
   window.EJS_Buttons = {
     playPause:    false,
     restart:      true,
@@ -144,7 +162,8 @@ function startEmulatorCore() {
     cacheManager: false,
   };
 
+  /* Injection unique du loader — déclenche l'émulateur */
   const coreLoader = document.createElement('script');
-  coreLoader.src = 'https://cdn.emulatorjs.org/stable/data/loader.js?v=' + Date.now();
+  coreLoader.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
   document.head.appendChild(coreLoader);
 }

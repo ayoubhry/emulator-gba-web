@@ -1,24 +1,24 @@
-/* ─── VARIABLES ET DESIGN SYSTEM (Inspiré de ayoubhry.github.io) ─── */
+/* ─── DESIGN SYSTEM ─── */
 :root {
   --bg-dark: #0b0f19;
   --bg-card: rgba(17, 24, 39, 0.7);
   --border-color: rgba(255, 255, 255, 0.06);
   --text-main: #f3f4f6;
   --text-muted: #9ca3af;
-  
-  /* Couleurs de l'identité visuelle (Gradients du Portfolio) */
   --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
   --accent-blue: #3b82f6;
   --accent-purple: #8b5cf6;
-  
-  /* Couleurs physiques de la console originale */
-  --gba-shell: #4f526b;      /* Couleur GBA Indigo de la photo */
-  --gba-shell-dark: #37394d;
-  --gba-plastic-grey: #c2c4d1; 
-  --gba-screen-border: #1f2029;
+
+  /* Couleurs du cadre GBA (violet/indigo fidèle à la photo) */
+  --frame-color: #4b4e6d;
+  --frame-dark:  #2e3050;
+  --frame-light: #6265a0;
+  --frame-bottom: #232540;
+  --screen-border: #0f1018;
+  --screen-inner: #0d1117;
 }
 
-/* ─── RESET & FOND DU SITE ─── */
+/* ─── RESET ─── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
@@ -29,330 +29,268 @@ body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
-  /* Grille de fond subtile identique au portfolio */
-  background-image: 
-    radial-gradient(circle at 50% -20%, rgba(59, 130, 246, 0.18), transparent 50%),
-    linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
-  background-size: 100% 100%, 32px 32px, 32px 32px;
+  background-image:
+    radial-gradient(circle at 50% -20%, rgba(59, 130, 246, 0.15), transparent 55%),
+    linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+  background-size: 100% 100%, 36px 36px, 36px 36px;
 }
 
-/* Texte en dégradé */
 .gradient-text {
   background: var(--primary-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* ─── HEADER BAR ─── */
+/* ─── HEADER ─── */
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 4vw;
+  padding: 1.4rem 4vw;
   border-bottom: 1px solid var(--border-color);
-  background: rgba(11, 15, 25, 0.8);
-  backdrop-filter: blur(12px);
+  background: rgba(11,15,25,0.85);
+  backdrop-filter: blur(14px);
   position: sticky;
   top: 0;
   z-index: 100;
 }
 header .brand {
   font-family: 'JetBrains Mono', monospace;
-  font-weight: 800;
-  font-size: 1.4rem;
+  font-weight: 700;
+  font-size: 1.35rem;
   letter-spacing: -0.03em;
 }
 .status-badge {
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  background: rgba(16,185,129,0.1);
+  border: 1px solid rgba(16,185,129,0.2);
   color: #10b981;
   padding: 6px 14px;
   border-radius: 30px;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 .status-badge .dot {
-  width: 8px;
-  height: 8px;
+  width: 8px; height: 8px;
   background: #10b981;
   border-radius: 50%;
-  box-shadow: 0 0 10px #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px #10b981; }
+  50%       { opacity: 0.6; box-shadow: 0 0 3px #10b981; }
 }
 
-/* CONTAINER GLOBAL */
+/* ─── LAYOUT ─── */
 .container {
-  width: min(1200px, 92vw);
+  width: min(1100px, 92vw);
   margin: 3rem auto;
   display: flex;
   flex-direction: column;
-  gap: 4rem;
+  gap: 3.5rem;
   flex: 1;
 }
 
-/* ─── MODÉLISATION DE LA CONSOLE (Fidèle à l'image originale) ─── */
+/* ═══════════════════════════════════════════════
+   CADRE GBA — Inspiré de la photo (vue écran seul)
+   ═══════════════════════════════════════════════ */
 .emulator-section {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.gba-wrapper {
+
+.gba-frame-wrapper {
   position: relative;
-}
-.gba-shadow-glow {
-  position: absolute;
-  inset: -20px;
-  background: var(--primary-gradient);
-  filter: blur(50px);
-  opacity: 0.15;
-  z-index: -1;
+  display: inline-block;
 }
 
-/* Corps principal aux courbes asymétriques */
-.gba-console {
-  width: min(680px, 94vw);
-  background: linear-gradient(135deg, var(--gba-shell) 0%, var(--gba-shell-dark) 100%);
-  border-radius: 30px 30px 65px 65px; /* Recréé l'arrondi prononcé du bas de l'originale */
-  padding: 24px 20px;
-  position: relative;
-  box-shadow: 
-    inset 0 2px 4px rgba(255,255,255,0.2),
-    0 20px 40px rgba(0, 0, 0, 0.6);
+/* Halo lumineux derrière le cadre */
+.gba-glow {
+  position: absolute;
+  inset: -30px;
+  background: radial-gradient(ellipse at center, rgba(74, 78, 109, 0.55) 0%, transparent 70%);
+  filter: blur(20px);
+  z-index: 0;
+  pointer-events: none;
 }
 
-/* Gâchettes L & R intégrées */
-.shoulder {
-  position: absolute;
-  top: -10px;
-  width: 80px;
-  height: 20px;
-  background: var(--gba-plastic-grey);
-  border-radius: 8px 8px 0 0;
-  border: 1px solid rgba(0,0,0,0.2);
-  box-shadow: inset 0 2px 3px #fff;
+/* Le cadre principal — forme arrondie fidèle */
+.gba-frame {
+  position: relative;
+  z-index: 1;
+  width: min(560px, 90vw);
+  background: linear-gradient(160deg, var(--frame-light) 0%, var(--frame-color) 30%, var(--frame-dark) 100%);
+  border-radius: 22px 22px 30px 30px;
+  padding: 18px 22px 22px;
+  box-shadow:
+    inset 0 2px 5px rgba(255,255,255,0.18),
+    inset 0 -3px 6px rgba(0,0,0,0.4),
+    0 25px 60px rgba(0,0,0,0.7),
+    0 8px 20px rgba(0,0,0,0.5);
+}
+
+/* Barre supérieure : POWER + logo */
+.frame-top-bar {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: bold;
-  font-size: 0.75rem;
-  color: #555;
-  cursor: pointer;
-}
-.l-shoulder { left: 40px; border-radius: 15px 5px 0 0; }
-.r-shoulder { right: 40px; border-radius: 5px 15px 0 0; }
-
-/* Division interne */
-.gba-inner-body {
-  display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-.gba-left, .gba-right {
-  width: 90px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex-shrink: 0;
+  margin-bottom: 12px;
+  padding: 0 4px;
 }
 
-/* Croix Directionnelle Matérielle */
-.dpad {
-  position: relative;
-  width: 76px;
-  height: 76px;
-}
-.dpad-axis {
-  position: absolute;
-  background: #282930;
-  border: 1px solid #15151a;
-  border-radius: 3px;
-  box-shadow: inset 0 1px 2px rgba(255,255,255,0.2), 0 3px 5px rgba(0,0,0,0.4);
-}
-.dpad-h { width: 76px; height: 24px; top: 26px; left: 0; }
-.dpad-v { width: 24px; height: 76px; left: 26px; top: 0; }
-.dpad-center {
-  position: absolute;
-  width: 26px;
-  height: 26px;
-  top: 25px;
-  left: 25px;
-  background: #282930;
-  z-index: 2;
-  border-radius: 50%;
-}
-
-/* Bloc Central & Bloc Écran */
-.gba-center {
-  flex: 1;
-}
-.screen-frame {
-  background: var(--gba-screen-border);
-  border-radius: 10px 10px 25px 10px;
-  padding: 10px 14px 20px;
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.8);
-}
-.screen-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-.power-indicator {
+.power-group {
   display: flex;
   align-items: center;
   gap: 5px;
+}
+.power-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.55rem;
-  color: #777;
-}
-.led {
-  width: 7px;
-  height: 7px;
-  background: #ff3b30; /* Rouge éteint ou en attente */
-  border-radius: 50%;
-  box-shadow: 0 0 4px #ff3b30;
-}
-.led.on {
-  background: #34c759; /* Vert allumé */
-  box-shadow: 0 0 10px #34c759;
-}
-.screen-logo {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-style: italic;
-  font-weight: 800;
-  font-size: 0.65rem;
-  letter-spacing: 0.05em;
-  color: #a5a6b5;
+  font-size: 0.48rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.45);
+  text-transform: uppercase;
 }
 
-/* Dalle d'affichage d'émulation */
+/* LED POWER */
+.led {
+  width: 8px; height: 8px;
+  background: #c0392b;
+  border-radius: 50%;
+  box-shadow: 0 0 5px #c0392b;
+  transition: all 0.4s ease;
+}
+.led.on {
+  background: #2ecc71;
+  box-shadow: 0 0 12px #2ecc71, 0 0 4px #2ecc71;
+  animation: led-pulse 2.5s ease-in-out infinite;
+}
+@keyframes led-pulse {
+  0%, 100% { box-shadow: 0 0 12px #2ecc71, 0 0 4px #2ecc71; }
+  50%       { box-shadow: 0 0 5px #2ecc71; }
+}
+
+/* Logo GAME BOY ADVANCE centré */
+.frame-logo {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-style: italic;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.55);
+  text-transform: uppercase;
+}
+.frame-logo em {
+  font-style: normal;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.12em;
+}
+
+.frame-top-right {
+  width: 50px; /* équilibre flex */
+}
+
+/* Biseau autour de l'écran (double bordure fidèle à la GBA) */
+.screen-bezel {
+  background: var(--screen-border);
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow:
+    inset 0 3px 8px rgba(0,0,0,0.9),
+    inset 0 0 2px rgba(0,0,0,0.6),
+    0 2px 4px rgba(255,255,255,0.06);
+}
+
+/* Dalle d'affichage — ratio GBA exact (240×160 → 3:2) */
 .screen-display {
   width: 100%;
   aspect-ratio: 3 / 2;
-  background: #0d1117;
+  background: var(--screen-inner);
   border-radius: 4px;
   position: relative;
   overflow: hidden;
+  /* Légère texture scanline subtile */
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.06) 2px,
+    rgba(0,0,0,0.06) 3px
+  );
 }
+
 #emulator-container {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   position: absolute;
+  inset: 0;
   z-index: 5;
 }
+
+/* Écran de veille idle */
 #idle-screen {
   position: absolute;
   inset: 0;
-  background: #07090e;
+  background: linear-gradient(135deg, #0a2a6e 0%, #0a8ea0 100%);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 18px;
   z-index: 10;
-  gap: 15px;
 }
+
+/* Logo rétro coloré (copie fidèle de la GBA splash) */
 .retro-logo {
   font-family: 'Press Start 2P', monospace;
-  font-size: 0.85rem;
+  font-size: clamp(0.9rem, 2.5vw, 1.5rem);
   text-align: center;
-  color: #fff;
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+  line-height: 1;
 }
-.retro-logo .c-g { color: #3b82f6; }
-.retro-logo .c-a { color: #ef4444; }
-.retro-logo .c-m { color: #eab308; }
-.retro-logo .c-e { color: #10b981; }
-.sub-logo { font-size: 0.5rem; color: #6b7280; margin-top: 6px; letter-spacing: 3px; }
+.c-r { color: #e74c3c; }
+.c-y { color: #f1c40f; }
+.c-g { color: #2ecc71; }
+.c-b { color: #3498db; }
+.c-w { color: #fff; }
+
+.sub-logo {
+  font-size: 0.45em;
+  color: rgba(255,255,255,0.75);
+  letter-spacing: 4px;
+  margin-top: 10px;
+  text-shadow: none;
+}
+
 .blink-text {
   font-family: 'Press Start 2P', monospace;
-  font-size: 0.42rem;
-  color: #4b5563;
-  animation: blink 1.6s infinite step-end;
+  font-size: clamp(0.35rem, 1vw, 0.5rem);
+  color: rgba(255,255,255,0.6);
+  animation: blink 1.4s step-end infinite;
 }
 @keyframes blink { 50% { opacity: 0; } }
 
-/* Boutons d'action A et B (Diagonaux inclinés d'origine) */
-.action-buttons {
-  position: relative;
-  display: flex;
-  gap: 14px;
-  transform: rotate(-15deg); /* Angle conforme à la GBA réelle */
-  margin-bottom: 10px;
-}
-.btn-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.btn-action {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: #282930;
-  border: 1px solid #111;
-  color: rgba(255,255,255,0.8);
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 800;
-  font-size: 0.9rem;
-  cursor: pointer;
-  box-shadow: inset 0 2px 2px rgba(255,255,255,0.2), 0 4px 6px rgba(0,0,0,0.4);
-}
-.btn-action:active { transform: translateY(2px); box-shadow: none; }
-
-/* Grille Haut Parleur */
-.speaker-grille {
-  display: grid;
-  grid-template-columns: repeat(4, 5px);
-  gap: 4px;
-  transform: rotate(-25deg);
-  margin-top: 15px;
-}
-.speaker-grille span {
-  width: 4px;
-  height: 14px;
-  background: rgba(0,0,0,0.3);
-  border-radius: 3px;
-}
-
-/* Bas de console (Boutons Select / Start ovales en caoutchouc) */
-.gba-bottom-controls {
+/* Barre inférieure du cadre */
+.frame-bottom-bar {
+  margin-top: 14px;
   display: flex;
   justify-content: center;
-  gap: 25px;
-  margin-top: 15px;
 }
-.meta-btn-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-.btn-meta {
-  width: 32px;
-  height: 8px;
-  background: #747685;
-  border: 1px solid #444;
-  border-radius: 10px;
-  cursor: pointer;
-}
-.meta-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.55rem;
-  font-weight: bold;
-  color: #a5a6b5;
-}
-.label-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.6rem;
-  color: rgba(255,255,255,0.25);
-  margin-top: 4px;
+.frame-bottom-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-style: italic;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  color: rgba(255,255,255,0.3);
+  text-transform: uppercase;
 }
 
-/* ─── STYLE SOMBRE DU DASHBOARD PORTFOLIO ─── */
+/* ─── DASHBOARD ─── */
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -360,9 +298,10 @@ header .brand {
 }
 @media (max-width: 768px) {
   .dashboard-grid { grid-template-columns: 1fr; }
+  .gba-frame { width: 92vw; }
 }
 
-/* Cartes épurées (Cards) */
+/* Cards */
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -373,7 +312,7 @@ header .brand {
   transition: transform 0.3s ease, border-color 0.3s ease;
 }
 .card:hover {
-  border-color: rgba(59, 130, 246, 0.3);
+  border-color: rgba(59,130,246,0.3);
   transform: translateY(-2px);
 }
 .card-header {
@@ -382,170 +321,122 @@ header .brand {
   gap: 12px;
   margin-bottom: 0.75rem;
 }
-.card-icon {
-  font-size: 1.5rem;
-}
+.card-icon { font-size: 1.4rem; }
 .card h3 {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 .card-desc {
   color: var(--text-muted);
-  font-size: 0.9rem;
-  line-height: 1.5;
-  margin-bottom: 1.5rem;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  margin-bottom: 1.25rem;
+}
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8em;
+  background: rgba(255,255,255,0.05);
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
-/* Zone d'importation drag-drop tech */
-.drop-zone {
-  position: relative;
-  border: 2px dashed rgba(255, 255, 255, 0.1);
-  background: rgba(255,255,255,0.01);
-  border-radius: 12px;
-  padding: 2.5rem 1rem;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.drop-zone:hover {
-  border-color: var(--accent-blue);
-  background: rgba(59,130,246,0.03);
-}
-.drop-zone input {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-}
-.upload-icon {
-  font-size: 1.8rem;
-  display: block;
-  margin-bottom: 0.5rem;
-}
-.drop-zone p {
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-.sub-drop {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin-top: 4px;
-  display: block;
-}
-.highlight {
-  color: var(--accent-blue);
-}
-
-/* Status & Bouton d'action principal */
+/* File status */
 .file-status {
-  margin-top: 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(0,0,0,0.2);
+  background: rgba(0,0,0,0.25);
   padding: 10px 14px;
   border-radius: 10px;
   border: 1px solid var(--border-color);
+  margin-bottom: 1rem;
 }
 .file-details {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   max-width: 60%;
+  overflow: hidden;
 }
 .file-name {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
 }
+
+/* Drop zone */
+.drop-zone {
+  position: relative;
+  border: 2px dashed rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.01);
+  border-radius: 12px;
+  padding: 2.2rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.drop-zone:hover {
+  border-color: var(--accent-blue);
+  background: rgba(59,130,246,0.04);
+}
+.drop-zone input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%; height: 100%;
+  cursor: pointer;
+}
+.upload-icon { font-size: 1.6rem; display: block; margin-bottom: 0.5rem; }
+.drop-zone p { font-size: 0.9rem; font-weight: 600; }
+.sub-drop { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; display: block; }
+.highlight { color: var(--accent-blue); }
+
+/* Btn primary */
 .btn-primary {
   background: var(--primary-gradient);
   color: #fff;
   border: none;
-  padding: 10px 20px;
+  padding: 9px 18px;
   border-radius: 8px;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(139, 92, 246, 0.4);
-  transition: filter 0.2s ease;
+  box-shadow: 0 4px 14px rgba(139,92,246,0.35);
+  transition: filter 0.2s ease, transform 0.1s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
-.btn-primary:hover {
-  filter: brightness(1.1);
-}
+.btn-primary:hover { filter: brightness(1.12); }
+.btn-primary:active { transform: scale(0.97); }
 
-/* Liste de contrôles modernisée */
-.controls-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+/* Controls list */
+.controls-list { display: flex; flex-direction: column; gap: 10px; }
 .control-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
 }
-.control-row span {
-  color: var(--text-muted);
-}
+.control-row span { color: var(--text-muted); }
+.control-row div { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
 kbd {
   background: #1e293b;
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 5px;
-  padding: 3px 8px;
+  padding: 3px 7px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   box-shadow: 0 2px 0 rgba(0,0,0,0.5);
-  margin-left: 4px;
 }
 
-/* ─── OVERLAY MODERNE (SPINNER) ─── */
-#overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--bg-dark);
-  z-index: 500;
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
-#overlay.active { display: flex; }
-.ov-content { text-align: center; }
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(59, 130, 246, 0.1);
-  border-top-color: var(--accent-blue);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin: 0 auto 1.5rem;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.ov-title {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 800;
-  letter-spacing: 2px;
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
-}
-.ov-sub {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-}
-
-/* ─── Section "Changer de jeu" rétractable ─── */
-details { margin-top: 0.5rem; }
-details[open] .drop-zone { animation: fade-in 0.2s ease; }
-@keyframes fade-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
-
+/* Details / summary */
+details { margin-top: 0.25rem; }
 .change-rom-summary {
   font-size: 0.8rem;
   font-weight: 600;
@@ -558,23 +449,48 @@ details[open] .drop-zone { animation: fade-in 0.2s ease; }
   user-select: none;
   transition: color 0.2s;
 }
-.change-rom-summary::before { content: '▶'; font-size: 0.6rem; transition: transform 0.2s; }
+.change-rom-summary::before { content: '▶'; font-size: 0.55rem; transition: transform 0.2s; }
 details[open] .change-rom-summary::before { transform: rotate(90deg); }
 .change-rom-summary:hover { color: var(--text-main); }
+details[open] .drop-zone { animation: fade-in 0.2s ease; }
+@keyframes fade-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 
-/* FOOTER */
+/* ─── OVERLAY ─── */
+#overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-dark);
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+#overlay.active { display: flex; }
+.ov-content { text-align: center; }
+.spinner {
+  width: 38px; height: 38px;
+  border: 3px solid rgba(59,130,246,0.12);
+  border-top-color: var(--accent-blue);
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+  margin: 0 auto 1.5rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.ov-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  letter-spacing: 2px;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+.ov-sub { color: var(--text-muted); font-size: 0.82rem; }
+
+/* ─── FOOTER ─── */
 footer {
   margin-top: auto;
-  padding: 2.5rem;
+  padding: 2rem;
   border-top: 1px solid var(--border-color);
   text-align: center;
 }
-.footer-content p {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-}
-.sub-footer {
-  font-size: 0.75rem !important;
-  color: #4b5563 !important;
-  margin-top: 6px;
-}
+.footer-content p { font-size: 0.82rem; color: var(--text-muted); }
+.sub-footer { font-size: 0.72rem !important; color: #4b5563 !important; margin-top: 5px; }
