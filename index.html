@@ -1,6 +1,169 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-  <meta http-equiv="refresh" content="0; url=test-ds.html">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GBA Web Emulator — Next Gen</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Press+Start+2P&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
 </head>
+<body>
+
+  <div id="overlay">
+    <div class="ov-content">
+      <div class="spinner"></div>
+      <div class="ov-title">BOOTING CORE</div>
+      <div class="ov-sub">Initialisation du noyau mGBA (WebAssembly)...</div>
+    </div>
+  </div>
+
+  <header>
+    <div class="brand">GBA<span class="gradient-text">.core</span></div>
+    <nav>
+      <span class="status-badge"><span class="dot live"></span> System Ready</span>
+    </nav>
+  </header>
+
+  <main class="container">
+    
+    <section class="emulator-section">
+      <div class="gba-wrapper">
+        <div class="gba-shadow-glow"></div>
+        
+        <div class="gba-console">
+          
+          <div class="shoulder l-shoulder" id="key-l"><span>L</span></div>
+          <div class="shoulder r-shoulder" id="key-r"><span>R</span></div>
+
+          <div class="gba-inner-body">
+            
+            <div class="gba-left">
+              <div class="dpad">
+                <div class="dpad-axis dpad-h" id="key-hl"></div>
+                <div class="dpad-axis dpad-v" id="key-vu"></div>
+                <div class="dpad-center"></div>
+              </div>
+              <div class="label-hint">Z Q S D</div>
+            </div>
+
+            <div class="gba-center">
+              <div class="screen-frame">
+                <div class="screen-header">
+                  <div class="power-indicator">
+                    <div class="led" id="power-led"></div>
+                    <span>POWER</span>
+                  </div>
+                  <div class="screen-logo">GAME BOY ADVANCE</div>
+                </div>
+                <div class="screen-display" id="screen">
+                  <div id="emulator-container"></div>
+                  <div id="idle-screen">
+                    <div class="retro-logo">
+                      <span class="c-g">G</span><span class="c-a">A</span><span class="c-m">M</span><span class="c-e">E</span> <span>BOY</span>
+                      <div class="sub-logo">ADVANCE</div>
+                    </div>
+                    <p class="blink-text">Veuillez insérer une ROM</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="gba-right">
+              <div class="action-buttons">
+                <div class="btn-container">
+                  <button class="btn-action b-btn" id="key-b">B</button>
+                  <span class="label-hint">[M]</span>
+                </div>
+                <div class="btn-container">
+                  <button class="btn-action a-btn" id="key-a">A</button>
+                  <span class="label-hint">[L]</span>
+                </div>
+              </div>
+              
+              <div class="speaker-grille">
+                <span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="gba-bottom-controls">
+            <div class="meta-btn-group">
+              <button class="btn-meta" id="key-sel"></button>
+              <span class="meta-label">SELECT <span class="hint">[Maj]</span></span>
+            </div>
+            <div class="meta-btn-group">
+              <button class="btn-meta" id="key-st"></button>
+              <span class="meta-label">START <span class="hint">[Entrée]</span></span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard-grid">
+      
+      <div class="card upload-card">
+        <div class="card-header">
+          <div class="card-icon">🟢</div>
+          <h3>Jeu chargé automatiquement</h3>
+        </div>
+        <p class="card-desc">La ROM <strong>Pokémon — Version Émeraude</strong> est injectée automatiquement depuis <code>Roms/</code> dès l'ouverture de la page — aucune action requise.</p>
+
+        <div class="file-status" id="rom-info" style="margin-bottom: 1.25rem;">
+          <div class="file-details">
+            <span class="file-icon">🎮</span>
+            <span class="file-name" id="rom-name">Initialisation…</span>
+          </div>
+          <button class="btn-primary" onclick="launchEmulator()">↺ Relancer</button>
+        </div>
+
+        <details>
+          <summary class="change-rom-summary">Changer de jeu (optionnel)</summary>
+          <div class="drop-zone" id="drop-zone" style="margin-top: 0.75rem;">
+            <input type="file" id="rom-input" accept=".gba,.zip,.7z"/>
+            <div class="drop-zone-content">
+              <span class="upload-icon">⚡</span>
+              <p>Déposer un fichier <span class="highlight">.gba</span> ou <span class="highlight">.zip</span></p>
+              <span class="sub-drop">Ou cliquez pour explorer vos fichiers</span>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="card Controls-card">
+        <div class="card-header">
+          <div class="card-icon">⌨</div>
+          <h3>Configuration Clavier</h3>
+        </div>
+        <p class="card-desc">Les touches matérielles de la console sont mappées par défaut selon la configuration ci-dessous :</p>
+        
+        <div class="controls-list">
+          <div class="control-row"><span>Croix directionnelle</span> <kbd>Z</kbd> <kbd>Q</kbd> <kbd>S</kbd> <kbd>D</kbd></div>
+          <div class="control-row"><span>Bouton Action A</span> <kbd>L</kbd></div>
+          <div class="control-row"><span>Bouton Action B</span> <kbd>M</kbd></div>
+          <div class="control-row"><span>Gâchettes Hautes (L / R)</span> <kbd>I</kbd> / <kbd>P</kbd></div>
+          <div class="control-row"><span>START / SELECT</span> <kbd>Entrée ↵</kbd> / <kbd>Maj ⇧</kbd></div>
+          <div class="control-row"><span>Plein écran Émulateur</span> <kbd>F11</kbd></div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p>© 2026 GBA Web Emulator — Hébergé de manière sécurisée sur GitHub Pages</p>
+      <p class="sub-footer">Propulsé par EmulatorJS & mGBA WebAssembly Architecture</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
+  <script src="script.js" defer></script>
+</body>
 </html>
