@@ -6,7 +6,7 @@
 
 /* ─── Config ROM auto ─── */
 var AUTO_ROM = {
-  path: 'Roms/Pok\u00e9mon - Version Emeraude.gba',
+  path: 'Roms/Pokemon - Version Emeraude.gba',
   name: 'Pokémon — Version Émeraude',
 };
 
