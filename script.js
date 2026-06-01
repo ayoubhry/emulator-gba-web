@@ -32,7 +32,7 @@ if (btnRelancer) {
 /* ─── Chargement automatique de la ROM ─── */
 romNameDisplay.textContent = '⏳  Chargement de Pokémon Émeraude…';
 
-fetch(AUTO_ROM.path)
+fetch(AUTO_ROM.path, { method: 'HEAD' })  // HEAD = vérifie l'existence sans télécharger le fichier
   .then(function (res) {
     if (!res.ok) {
       throw new Error('HTTP ' + res.status + ' — fichier introuvable : ' + AUTO_ROM.path);
@@ -82,8 +82,9 @@ function processFile(file) {
     currentBlobUrl = null;
   }
   currentBlobUrl = URL.createObjectURL(file);
+  var cleanName = file.name.replace(/\.[^.]+$/, '');  // retire l'extension
   romNameDisplay.textContent = file.name;
-  launchEmulator(currentBlobUrl, file.name);
+  launchEmulator(currentBlobUrl, cleanName);
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -116,7 +117,7 @@ function launchEmulator(romUrl, romLabel) {
   window.EJS_gameUrl         = romUrl;
   window.EJS_gameName        = romLabel;
   window.EJS_pathtodata      = 'https://cdn.emulatorjs.org/latest/data/';
-  window.EJS_startOnLoaded   = true;
+  window.EJS_startOnLoaded   = false;  // l'utilisateur clique Play → contourne les restrictions autoplay
   window.EJS_backgroundColor = '#000000';
   window.EJS_color           = '#8b5cf6';
 
@@ -134,7 +135,7 @@ function launchEmulator(romUrl, romLabel) {
   };
 
   window.EJS_Buttons = {
-    playPause:    false,
+    playPause:    true,   // OBLIGATOIRE quand startOnLoaded=false : c'est ce bouton qui lance le jeu
     restart:      true,
     mute:         true,
     volume:       true,
