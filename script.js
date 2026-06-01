@@ -97,69 +97,60 @@ function processFile(file) {
    4. EJS_player doit pointer vers un élément VIDE dans le DOM.
    ══════════════════════════════════════════════════════════════ */
 function launchEmulator(romUrl, romLabel) {
-  // Garde-fou : une seule instance par chargement de page
   if (emulatorStarted) {
     window.location.reload();
     return;
   }
   emulatorStarted = true;
 
-  // Overlay de boot
-  bootOverlay.classList.add('active');
+  // Allumer la LED verte
+  powerLed.classList.add('on');
 
-  setTimeout(function () {
-    bootOverlay.classList.remove('active');
-    powerLed.classList.add('on');
+  // Supprimer l'écran idle
+  var idle = document.getElementById('idle-screen');
+  if (idle) idle.remove();
 
-    // Supprimer l'écran idle AVANT que l'émulateur ne prenne la place
-    var idle = document.getElementById('idle-screen');
-    if (idle) idle.remove();
+  /* ── Variables EmulatorJS ── */
+  window.EJS_player          = '#game';
+  window.EJS_core            = 'gba';
+  window.EJS_gameUrl         = romUrl;
+  window.EJS_gameName        = romLabel;
+  window.EJS_pathtodata      = 'https://cdn.emulatorjs.org/latest/data/';
+  window.EJS_startOnLoaded   = true;
+  window.EJS_backgroundColor = '#000000';
+  window.EJS_color           = '#8b5cf6';
 
-    /* ── Variables EmulatorJS ── */
-    window.EJS_player          = '#game';
-    window.EJS_core            = 'gba';        // "gba" = core officiel GBA
-    window.EJS_gameUrl         = romUrl;        // URL HTTP relative ou blob://
-    window.EJS_gameName        = romLabel;      // utilisé pour les saves/screenshots
-    window.EJS_pathtodata      = 'https://cdn.emulatorjs.org/stable/data/';
-    window.EJS_startOnLoaded   = true;
-    window.EJS_backgroundColor = '#000000';
-    window.EJS_color           = '#8b5cf6';    // couleur accent de l'UI EmulatorJS
+  window.EJS_defaultControls = {
+    0: { value: 'KeyL' },
+    1: { value: 'KeyM' },
+    2: { value: 'ShiftLeft' },
+    3: { value: 'Enter' },
+    4: { value: 'KeyZ' },
+    5: { value: 'KeyS' },
+    6: { value: 'KeyQ' },
+    7: { value: 'KeyD' },
+    8: { value: 'KeyI' },
+    9: { value: 'KeyP' },
+  };
 
-    /* Mapping AZERTY — API interne EJS (non garantie entre versions) */
-    window.EJS_defaultControls = {
-      0: { value: 'KeyL' },       // Bouton A
-      1: { value: 'KeyM' },       // Bouton B
-      2: { value: 'ShiftLeft' },  // SELECT
-      3: { value: 'Enter' },      // START
-      4: { value: 'KeyZ' },       // Haut
-      5: { value: 'KeyS' },       // Bas
-      6: { value: 'KeyQ' },       // Gauche
-      7: { value: 'KeyD' },       // Droite
-      8: { value: 'KeyI' },       // Gâchette L
-      9: { value: 'KeyP' },       // Gâchette R
-    };
+  window.EJS_Buttons = {
+    playPause:    false,
+    restart:      true,
+    mute:         true,
+    volume:       true,
+    fullscreen:   true,
+    saveState:    true,
+    loadState:    true,
+    screenRecord: false,
+    gamepad:      true,
+    cheat:        false,
+    screenshot:   true,
+    cacheManager: false,
+  };
 
-    /* Boutons barre EmulatorJS */
-    window.EJS_Buttons = {
-      playPause:    false,
-      restart:      true,
-      mute:         true,
-      volume:       true,
-      fullscreen:   true,
-      saveState:    true,
-      loadState:    true,
-      screenRecord: false,
-      gamepad:      true,
-      cheat:        false,
-      screenshot:   true,
-      cacheManager: false,
-    };
-
-    /* ── Injection unique du loader.js (APRÈS toutes les EJS_*) ── */
-    var script    = document.createElement('script');
-    script.src    = 'https://cdn.emulatorjs.org/stable/data/loader.js';
-    script.async  = false;  // s'assure d'une exécution séquentielle
-    document.body.appendChild(script);
-
-  }, 1800);
+  /* ── Injection unique du loader.js ── */
+  var script   = document.createElement('script');
+  script.src   = 'https://cdn.emulatorjs.org/latest/data/loader.js';
+  script.async = false;
+  document.body.appendChild(script);
 }
