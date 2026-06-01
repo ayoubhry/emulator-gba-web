@@ -7,15 +7,13 @@
   --text-muted: #9ca3af;
   --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
   --accent-blue: #3b82f6;
-  --accent-purple: #8b5cf6;
 
-  /* Couleurs du cadre GBA (violet/indigo fidèle à la photo) */
-  --frame-color: #4b4e6d;
-  --frame-dark:  #2e3050;
-  --frame-light: #6265a0;
-  --frame-bottom: #232540;
-  --screen-border: #0f1018;
-  --screen-inner: #0d1117;
+  /* Cadre GBA violet/indigo fidèle à la photo */
+  --frame-body:   #4a4d6b;
+  --frame-light:  #5f6290;
+  --frame-dark:   #2c2f4a;
+  --bezel-bg:     #0e1016;
+  --screen-bg:    #050709;
 }
 
 /* ─── RESET ─── */
@@ -30,7 +28,7 @@ body {
   flex-direction: column;
   overflow-x: hidden;
   background-image:
-    radial-gradient(circle at 50% -20%, rgba(59, 130, 246, 0.15), transparent 55%),
+    radial-gradient(circle at 50% -15%, rgba(59, 130, 246, 0.14), transparent 55%),
     linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
   background-size: 100% 100%, 36px 36px, 36px 36px;
@@ -55,7 +53,7 @@ header {
   top: 0;
   z-index: 100;
 }
-header .brand {
+.brand {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
   font-size: 1.35rem;
@@ -73,7 +71,7 @@ header .brand {
   align-items: center;
   gap: 8px;
 }
-.status-badge .dot {
+.dot {
   width: 8px; height: 8px;
   background: #10b981;
   border-radius: 50%;
@@ -81,8 +79,8 @@ header .brand {
   animation: pulse-dot 2s ease-in-out infinite;
 }
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; box-shadow: 0 0 8px #10b981; }
-  50%       { opacity: 0.6; box-shadow: 0 0 3px #10b981; }
+  0%,100% { opacity:1; box-shadow: 0 0 8px #10b981; }
+  50%      { opacity:.6; box-shadow: 0 0 3px #10b981; }
 }
 
 /* ─── LAYOUT ─── */
@@ -95,66 +93,70 @@ header .brand {
   flex: 1;
 }
 
-/* ═══════════════════════════════════════════════
-   CADRE GBA — Inspiré de la photo (vue écran seul)
-   ═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   CADRE GBA — Vue écran + bordure uniquement
+   ═══════════════════════════════════════════ */
 .emulator-section {
   display: flex;
   justify-content: center;
-  align-items: center;
 }
 
 .gba-frame-wrapper {
   position: relative;
-  display: inline-block;
 }
 
-/* Halo lumineux derrière le cadre */
+/* Halo violet derrière */
 .gba-glow {
   position: absolute;
-  inset: -30px;
-  background: radial-gradient(ellipse at center, rgba(74, 78, 109, 0.55) 0%, transparent 70%);
-  filter: blur(20px);
+  inset: -40px;
+  background: radial-gradient(ellipse at center,
+    rgba(80, 85, 130, 0.5) 0%,
+    transparent 70%);
+  filter: blur(24px);
   z-index: 0;
   pointer-events: none;
+  border-radius: 50%;
 }
 
-/* Le cadre principal — forme arrondie fidèle */
+/* Corps du cadre */
 .gba-frame {
   position: relative;
   z-index: 1;
-  width: min(560px, 90vw);
-  background: linear-gradient(160deg, var(--frame-light) 0%, var(--frame-color) 30%, var(--frame-dark) 100%);
-  border-radius: 22px 22px 30px 30px;
-  padding: 18px 22px 22px;
+  width: 600px;
+  max-width: 92vw;
+  background: linear-gradient(155deg,
+    var(--frame-light) 0%,
+    var(--frame-body)  35%,
+    var(--frame-dark)  100%);
+  border-radius: 20px 20px 32px 32px;
+  padding: 16px 20px 20px;
   box-shadow:
-    inset 0 2px 5px rgba(255,255,255,0.18),
-    inset 0 -3px 6px rgba(0,0,0,0.4),
-    0 25px 60px rgba(0,0,0,0.7),
+    inset 0 2px 5px rgba(255,255,255,0.16),
+    inset 0 -2px 5px rgba(0,0,0,0.35),
+    0 30px 70px rgba(0,0,0,0.75),
     0 8px 20px rgba(0,0,0,0.5);
 }
 
-/* Barre supérieure : POWER + logo */
+/* Barre supérieure POWER + logo */
 .frame-top-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
-  padding: 0 4px;
+  padding: 0 2px;
 }
-
 .power-group {
   display: flex;
   align-items: center;
   gap: 5px;
+  min-width: 60px;
 }
 .power-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.48rem;
+  font-size: 0.46rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  color: rgba(255,255,255,0.45);
-  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.4);
 }
 
 /* LED POWER */
@@ -162,143 +164,133 @@ header .brand {
   width: 8px; height: 8px;
   background: #c0392b;
   border-radius: 50%;
-  box-shadow: 0 0 5px #c0392b;
-  transition: all 0.4s ease;
+  box-shadow: 0 0 5px rgba(192,57,43,0.8);
+  flex-shrink: 0;
+  transition: background 0.4s, box-shadow 0.4s;
 }
 .led.on {
   background: #2ecc71;
-  box-shadow: 0 0 12px #2ecc71, 0 0 4px #2ecc71;
+  box-shadow: 0 0 14px rgba(46,204,113,0.9), 0 0 4px rgba(46,204,113,0.6);
   animation: led-pulse 2.5s ease-in-out infinite;
 }
 @keyframes led-pulse {
-  0%, 100% { box-shadow: 0 0 12px #2ecc71, 0 0 4px #2ecc71; }
-  50%       { box-shadow: 0 0 5px #2ecc71; }
+  0%,100% { box-shadow: 0 0 14px rgba(46,204,113,.9), 0 0 4px rgba(46,204,113,.6); }
+  50%      { box-shadow: 0 0 5px rgba(46,204,113,.5); }
 }
 
-/* Logo GAME BOY ADVANCE centré */
 .frame-logo {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 800;
   font-style: italic;
-  font-size: 0.68rem;
-  letter-spacing: 0.06em;
-  color: rgba(255,255,255,0.55);
+  font-size: 0.65rem;
+  letter-spacing: 0.07em;
+  color: rgba(255,255,255,0.5);
   text-transform: uppercase;
+  text-align: center;
+  flex: 1;
 }
 .frame-logo em {
   font-style: normal;
-  color: rgba(255,255,255,0.35);
-  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.13em;
 }
+.frame-top-right { min-width: 60px; }
 
-.frame-top-right {
-  width: 50px; /* équilibre flex */
-}
-
-/* Biseau autour de l'écran (double bordure fidèle à la GBA) */
+/* Biseau d'écran (double bordure) */
 .screen-bezel {
-  background: var(--screen-border);
+  background: var(--bezel-bg);
   border-radius: 10px;
   padding: 10px;
   box-shadow:
-    inset 0 3px 8px rgba(0,0,0,0.9),
-    inset 0 0 2px rgba(0,0,0,0.6),
-    0 2px 4px rgba(255,255,255,0.06);
+    inset 0 4px 10px rgba(0,0,0,0.95),
+    inset 0 0 0 1px rgba(0,0,0,0.6),
+    0 2px 4px rgba(255,255,255,0.04);
 }
 
-/* Dalle d'affichage — ratio GBA exact (240×160 → 3:2) */
+/* Dalle — ratio GBA exact 240×160 = 3:2 */
 .screen-display {
   width: 100%;
   aspect-ratio: 3 / 2;
-  background: var(--screen-inner);
+  background: var(--screen-bg);
   border-radius: 4px;
   position: relative;
   overflow: hidden;
-  /* Légère texture scanline subtile */
-  background-image: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,0,0,0.06) 2px,
-    rgba(0,0,0,0.06) 3px
-  );
 }
 
-#emulator-container {
-  width: 100%; height: 100%;
+/* EmulatorJS s'injecte dans #game.
+   display:block + top/left explicites garantit la visibilité
+   sur tous les navigateurs y compris Safari (inset pas toujours supporté). */
+#game {
+  display: block;
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   z-index: 5;
 }
 
-/* Écran de veille idle */
+/* Écran idle (avant chargement) */
 #idle-screen {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #0a2a6e 0%, #0a8ea0 100%);
+  background: linear-gradient(135deg, #071e5e 0%, #0a7a8e 100%);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
   z-index: 10;
 }
-
-/* Logo rétro coloré (copie fidèle de la GBA splash) */
 .retro-logo {
   font-family: 'Press Start 2P', monospace;
-  font-size: clamp(0.9rem, 2.5vw, 1.5rem);
+  font-size: clamp(0.85rem, 2.8vw, 1.5rem);
   text-align: center;
-  text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.4);
   line-height: 1;
 }
 .c-r { color: #e74c3c; }
 .c-y { color: #f1c40f; }
-.c-g { color: #2ecc71; }
-.c-b { color: #3498db; }
-.c-w { color: #fff; }
-
+.c-g { color: #27ae60; }
+.c-b { color: #2980b9; }
+.c-w { color: #ffffff; }
 .sub-logo {
-  font-size: 0.45em;
-  color: rgba(255,255,255,0.75);
-  letter-spacing: 4px;
+  font-size: 0.42em;
+  color: rgba(255,255,255,0.65);
+  letter-spacing: 5px;
   margin-top: 10px;
-  text-shadow: none;
 }
-
 .blink-text {
   font-family: 'Press Start 2P', monospace;
-  font-size: clamp(0.35rem, 1vw, 0.5rem);
-  color: rgba(255,255,255,0.6);
+  font-size: clamp(0.3rem, 1vw, 0.45rem);
+  color: rgba(255,255,255,0.55);
   animation: blink 1.4s step-end infinite;
 }
 @keyframes blink { 50% { opacity: 0; } }
 
-/* Barre inférieure du cadre */
+/* Barre inférieure */
 .frame-bottom-bar {
   margin-top: 14px;
-  display: flex;
-  justify-content: center;
+  text-align: center;
 }
 .frame-bottom-label {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 800;
   font-style: italic;
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
-  color: rgba(255,255,255,0.3);
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  color: rgba(255,255,255,0.28);
   text-transform: uppercase;
 }
 
-/* ─── DASHBOARD ─── */
+/* ─── DASHBOARD GRID ─── */
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
 }
-@media (max-width: 768px) {
+@media (max-width: 720px) {
   .dashboard-grid { grid-template-columns: 1fr; }
-  .gba-frame { width: 92vw; }
 }
 
 /* Cards */
@@ -356,8 +348,6 @@ code {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.84rem;
-  max-width: 60%;
   overflow: hidden;
 }
 .file-name {
@@ -365,50 +355,43 @@ code {
   overflow: hidden;
   text-overflow: ellipsis;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
 }
 
 /* Drop zone */
 .drop-zone {
   position: relative;
   border: 2px dashed rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.01);
   border-radius: 12px;
-  padding: 2.2rem 1rem;
+  padding: 2rem 1rem;
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
 }
-.drop-zone:hover {
-  border-color: var(--accent-blue);
-  background: rgba(59,130,246,0.04);
-}
+.drop-zone:hover { border-color: var(--accent-blue); background: rgba(59,130,246,0.04); }
 .drop-zone input {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  width: 100%; height: 100%;
-  cursor: pointer;
+  position: absolute; inset: 0; opacity: 0;
+  width: 100%; height: 100%; cursor: pointer;
 }
-.upload-icon { font-size: 1.6rem; display: block; margin-bottom: 0.5rem; }
-.drop-zone p { font-size: 0.9rem; font-weight: 600; }
-.sub-drop { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; display: block; }
+.upload-icon { font-size: 1.5rem; display: block; margin-bottom: 0.5rem; }
+.drop-zone p { font-size: 0.88rem; font-weight: 600; }
+.sub-drop { font-size: 0.76rem; color: var(--text-muted); margin-top: 4px; display: block; }
 .highlight { color: var(--accent-blue); }
 
-/* Btn primary */
+/* Bouton primaire */
 .btn-primary {
   background: var(--primary-gradient);
   color: #fff;
   border: none;
-  padding: 9px 18px;
+  padding: 9px 16px;
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.82rem;
   cursor: pointer;
   box-shadow: 0 4px 14px rgba(139,92,246,0.35);
-  transition: filter 0.2s ease, transform 0.1s ease;
   white-space: nowrap;
   flex-shrink: 0;
+  transition: filter 0.2s, transform 0.1s;
 }
 .btn-primary:hover { filter: brightness(1.12); }
 .btn-primary:active { transform: scale(0.97); }
@@ -431,7 +414,7 @@ kbd {
   border-radius: 5px;
   padding: 3px 7px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   box-shadow: 0 2px 0 rgba(0,0,0,0.5);
 }
 
@@ -453,12 +436,11 @@ details { margin-top: 0.25rem; }
 details[open] .change-rom-summary::before { transform: rotate(90deg); }
 .change-rom-summary:hover { color: var(--text-main); }
 details[open] .drop-zone { animation: fade-in 0.2s ease; }
-@keyframes fade-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@keyframes fade-in { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
 
 /* ─── OVERLAY ─── */
 #overlay {
-  position: fixed;
-  inset: 0;
+  position: fixed; inset: 0;
   background: var(--bg-dark);
   z-index: 500;
   display: none;

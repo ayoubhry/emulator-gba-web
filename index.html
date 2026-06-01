@@ -37,7 +37,8 @@
         <div class="gba-glow"></div>
 
         <div class="gba-frame">
-          <!-- Barre supérieure du cadre -->
+
+          <!-- Barre supérieure -->
           <div class="frame-top-bar">
             <div class="power-group">
               <div class="led" id="power-led"></div>
@@ -49,12 +50,11 @@
 
           <!-- Dalle d'affichage -->
           <div class="screen-bezel">
-            <div class="screen-display" id="screen">
-              <div id="emulator-container"></div>
+            <div class="screen-display">
+              <div id="game"></div>
               <div id="idle-screen">
                 <div class="retro-logo">
-                  <span class="c-r">G</span><span class="c-y">A</span><span class="c-g">M</span><span class="c-b">E</span>
-                  <span class="c-w"> BOY</span>
+                  <span class="c-r">G</span><span class="c-y">A</span><span class="c-g">M</span><span class="c-b">E</span><span class="c-w"> BOY</span>
                   <div class="sub-logo">ADVANCE</div>
                 </div>
                 <p class="blink-text">INSERT ROM TO PLAY</p>
@@ -62,10 +62,11 @@
             </div>
           </div>
 
-          <!-- Barre inférieure du cadre -->
+          <!-- Barre inférieure -->
           <div class="frame-bottom-bar">
             <div class="frame-bottom-label">GAME BOY ADVANCE</div>
           </div>
+
         </div>
       </div>
     </section>
@@ -85,12 +86,12 @@
             <span class="file-icon">🎮</span>
             <span class="file-name" id="rom-name">Initialisation…</span>
           </div>
-          <button class="btn-primary" onclick="launchEmulator()">↺ Relancer</button>
+          <button class="btn-primary" id="btn-relancer">↺ Relancer</button>
         </div>
 
         <details>
           <summary class="change-rom-summary">Changer de jeu (optionnel)</summary>
-          <div class="drop-zone" id="drop-zone" style="margin-top: 0.75rem;">
+          <div class="drop-zone" id="drop-zone" style="margin-top:0.75rem;">
             <input type="file" id="rom-input" accept=".gba,.zip,.7z"/>
             <div class="drop-zone-content">
               <span class="upload-icon">⚡</span>
@@ -107,7 +108,6 @@
           <h3>Configuration Clavier</h3>
         </div>
         <p class="card-desc">Mapping clavier par défaut de la console :</p>
-
         <div class="controls-list">
           <div class="control-row"><span>Croix directionnelle</span><div><kbd>Z</kbd><kbd>Q</kbd><kbd>S</kbd><kbd>D</kbd></div></div>
           <div class="control-row"><span>Bouton A</span><kbd>L</kbd></div>
@@ -128,6 +128,6 @@
     </div>
   </footer>
 
-  <script src="script.js" defer></script>
+  <script src="script.js"></script>
 </body>
 </html>
