@@ -4,8 +4,8 @@
 
 /* ─── Config ROM auto ─── */
 var AUTO_ROM = {
-  path: 'Roms/Pokemon - Version Emeraude.gba',
-  name: 'Pokémon — Version Émeraude',
+  path: 'PokemonEmeraude.gba',      // On a enlevé "Roms/" car le jeu est à la racine !
+  name: 'Pokémon Version Émeraude',
 };
 
 /* ─── État global ─── */
@@ -66,7 +66,12 @@ function processFile(file) {
   if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
   currentBlobUrl = URL.createObjectURL(file);
   romNameDisplay.textContent = file.name;
-  if (emulatorStarted) { window.location.reload(); return; }
+  /* ─── Chargement automatique de la ROM (Désactivé pour diagnostic) ─── */
+  romNameDisplay.textContent = '⚠️ Mode manuel — Glissez votre jeu ci-dessous';
+  var details = document.querySelector('details');
+  if (details) details.open = true;
+
+// Le bloc "fetch(AUTO_ROM.path)..." est retiré pour bloquer le lancement automatique défectueux
   launchEmulator(currentBlobUrl, file.name.replace(/\.[^.]+$/, ''));
 }
 
