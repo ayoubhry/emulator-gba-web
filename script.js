@@ -1,7 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   GBA Web Emulator — script.js
-   Placé juste avant </body> → le DOM est déjà parsé quand ce
-   script s'exécute. PAS de "defer", PAS de DOMContentLoaded.
+   GBA Web Emulator — script.js  (contrôles corrigés)
    ══════════════════════════════════════════════════════════════ */
 
 /* ─── Config ROM auto ─── */
@@ -14,11 +12,10 @@ var AUTO_ROM = {
 var emulatorStarted = false;
 var currentBlobUrl  = null;
 
-/* ─── Captures DOM (script placé avant </body> → DOM déjà disponible) ─── */
+/* ─── Captures DOM ─── */
 var romInput       = document.getElementById('rom-input');
 var dropZone       = document.getElementById('drop-zone');
 var romNameDisplay = document.getElementById('rom-name');
-var bootOverlay    = document.getElementById('overlay');
 var powerLed       = document.getElementById('power-led');
 var btnRelancer    = document.getElementById('btn-relancer');
 
@@ -32,29 +29,25 @@ if (btnRelancer) {
 /* ─── Chargement automatique de la ROM ─── */
 romNameDisplay.textContent = '⏳  Chargement de Pokémon Émeraude…';
 
-fetch(AUTO_ROM.path, { method: 'HEAD' })  // HEAD = vérifie l'existence sans télécharger le fichier
+fetch(AUTO_ROM.path, { method: 'HEAD' })
   .then(function (res) {
-    if (!res.ok) {
-      throw new Error('HTTP ' + res.status + ' — fichier introuvable : ' + AUTO_ROM.path);
-    }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     romNameDisplay.textContent = AUTO_ROM.name;
     launchEmulator(AUTO_ROM.path, AUTO_ROM.name);
   })
   .catch(function (err) {
-    console.error('[GBA] Erreur chargement auto :', err);
-    romNameDisplay.textContent = '❌  ' + err.message;
-    // Ouvrir automatiquement la section drag & drop en fallback
+    console.warn('[GBA] ROM auto introuvable :', err.message);
+    romNameDisplay.textContent = '⚠️ Aucune ROM — chargez-en une ci-dessous';
     var details = document.querySelector('details');
     if (details) details.open = true;
   });
 
-/* ─── Import manuel : sélecteur de fichier ─── */
+/* ─── Import manuel ─── */
 romInput.addEventListener('change', function (e) {
   var file = e.target.files[0];
   if (file) processFile(file);
 });
 
-/* ─── Import manuel : drag & drop ─── */
 dropZone.addEventListener('dragover', function (e) {
   e.preventDefault();
   dropZone.style.borderColor = '#3b82f6';
@@ -69,73 +62,80 @@ dropZone.addEventListener('drop', function (e) {
   if (file) processFile(file);
 });
 
-/* ─── Traitement d'un fichier local ─── */
 function processFile(file) {
-  var ext = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
-  if (['.gba', '.zip', '.7z'].indexOf(ext) === -1) {
-    alert('Format non pris en charge. Utilisez .gba, .zip ou .7z');
-    return;
-  }
-  // Révoquer le blob URL précédent pour éviter les fuites mémoire
-  if (currentBlobUrl) {
-    URL.revokeObjectURL(currentBlobUrl);
-    currentBlobUrl = null;
-  }
+  if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
   currentBlobUrl = URL.createObjectURL(file);
-  var cleanName = file.name.replace(/\.[^.]+$/, '');  // retire l'extension
   romNameDisplay.textContent = file.name;
-  launchEmulator(currentBlobUrl, cleanName);
+  if (emulatorStarted) { window.location.reload(); return; }
+  launchEmulator(currentBlobUrl, file.name.replace(/\.[^.]+$/, ''));
 }
 
-/* ══════════════════════════════════════════════════════════════
-   launchEmulator
-   ──────────────────────────────────────────────────────────────
-   RÈGLES CRITIQUES EmulatorJS (v4+) :
-   1. Toutes les variables window.EJS_* doivent être définies
-      AVANT l'injection de loader.js.
-   2. loader.js ne doit être injecté QU'UNE SEULE FOIS par page.
-   3. Le core GBA = "gba" (mgba est aussi accepté selon la doc).
-   4. EJS_player doit pointer vers un élément VIDE dans le DOM.
-   ══════════════════════════════════════════════════════════════ */
+/* ─── Lancement de l'émulateur ─── */
 function launchEmulator(romUrl, romLabel) {
-  if (emulatorStarted) {
-    window.location.reload();
-    return;
-  }
+  if (emulatorStarted) { window.location.reload(); return; }
   emulatorStarted = true;
 
-  // Allumer la LED verte
-  powerLed.classList.add('on');
+  localStorage.clear();
 
-  // Supprimer l'écran idle
+  if (powerLed) powerLed.classList.add('on');
   var idle = document.getElementById('idle-screen');
   if (idle) idle.remove();
 
-  /* ── Variables EmulatorJS ── */
-  window.EJS_player          = '#game';
+  window.EJS_player          = '#emulator-container';
   window.EJS_core            = 'gba';
   window.EJS_gameUrl         = romUrl;
-  window.EJS_gameName        = romLabel;
-  window.EJS_pathtodata      = 'https://cdn.emulatorjs.org/latest/data/';
-  window.EJS_startOnLoaded   = false;  // l'utilisateur clique Play → contourne les restrictions autoplay
+  window.EJS_gameName        = romLabel || 'GBA Game';
+  window.EJS_pathtodata      = 'https://cdn.emulatorjs.org/stable/data/';
+  window.EJS_startOnLoaded   = true;
   window.EJS_backgroundColor = '#000000';
   window.EJS_color           = '#8b5cf6';
+  window.EJS_language        = 'fr';
 
+  /*
+   * ══════════════════════════════════════════════════════════
+   *  MAPPING DES CONTRÔLES — FORMAT OFFICIEL EmulatorJS
+   *  Source : https://emulatorjs.org/docs4devs/control-mapping
+   *
+   *  Structure : EJS_defaultControls = { joueur: { index: { value: event.key } } }
+   *  Les "value" sont les noms exacts de event.key (sensible à la casse !)
+   *
+   *  Index GBA (RetroArch) :
+   *    0 = B        → touche M
+   *    1 = Y        → (inutilisé sur GBA, on le laisse vide)
+   *    2 = SELECT   → Maj gauche (Shift)
+   *    3 = START    → Entrée (Enter)
+   *    4 = UP       → Z
+   *    5 = DOWN     → S
+   *    6 = LEFT     → Q
+   *    7 = RIGHT    → D
+   *    8 = A        → L
+   *    9 = X        → (inutilisé sur GBA)
+   *   10 = L        → I
+   *   11 = R        → P
+   * ══════════════════════════════════════════════════════════
+   */
   window.EJS_defaultControls = {
-    0: { value: 'KeyL' },
-    1: { value: 'KeyM' },
-    2: { value: 'ShiftLeft' },
-    3: { value: 'Enter' },
-    4: { value: 'KeyZ' },
-    5: { value: 'KeyS' },
-    6: { value: 'KeyQ' },
-    7: { value: 'KeyD' },
-    8: { value: 'KeyI' },
-    9: { value: 'KeyP' },
+    0: {                              // Joueur 1
+      0:  { value: 'm'       },      // Bouton B   → M
+      1:  { value: ''        },      // Y          → (vide)
+      2:  { value: 'Shift'   },      // SELECT     → Maj ⇧
+      3:  { value: 'Enter'   },      // START      → Entrée ↵
+      4:  { value: 'z'       },      // HAUT       → Z
+      5:  { value: 's'       },      // BAS        → S
+      6:  { value: 'q'       },      // GAUCHE     → Q
+      7:  { value: 'd'       },      // DROITE     → D
+      8:  { value: 'k'       },      // Bouton A   → K
+      9:  { value: ''        },      // X          → (vide)
+      10: { value: 'i'       },      // Gâchette L → I
+      11: { value: 'p'       },      // Gâchette R → P
+    },
+    1: {},
+    2: {},
+    3: {}
   };
 
   window.EJS_Buttons = {
-    playPause:    true,   // OBLIGATOIRE quand startOnLoaded=false : c'est ce bouton qui lance le jeu
+    playPause:    true,
     restart:      true,
     mute:         true,
     volume:       true,
@@ -149,9 +149,8 @@ function launchEmulator(romUrl, romLabel) {
     cacheManager: false,
   };
 
-  /* ── Injection unique du loader.js ── */
   var script   = document.createElement('script');
-  script.src   = 'https://cdn.emulatorjs.org/latest/data/loader.js';
+  script.src   = 'https://cdn.emulatorjs.org/stable/data/loader.js';
   script.async = false;
   document.body.appendChild(script);
 }
