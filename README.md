@@ -8,7 +8,7 @@
 
 Un émulateur **Game Boy Advance** au design moderne tournant entièrement dans le navigateur, hébergé de manière sécurisée sur GitHub Pages. Il charge automatiquement une ROM par défaut dès l'ouverture de la page — **sans installation, sans plugin**.
 
-> 🚀 **[JOUER MAINTENANT (Live Demo)](https://ayoubhry.github.io/emulator-gba-web/)**
+> 🚀 **[JOUER MAINTENANT](https://ayoubhry.github.io/emulator-gba-web/)**
 
 Propulsé par [EmulatorJS](https://emulatorjs.org/) et le cœur d'émulation **mGBA WebAssembly**.
 
