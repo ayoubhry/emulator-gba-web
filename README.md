@@ -1,144 +1,54 @@
 # 🎮 GBA Web Emulator — Next Gen
 
-Un émulateur **Game Boy Advance** tournant entièrement dans le navigateur, hébergé sur GitHub Pages. Il charge automatiquement **Pokémon Version Émeraude** dès l'ouverture de la page — sans installation, sans plugin.
+[![Deploy to GitHub Pages](https://github.com/ayoubhry/emulator-gba-web/actions/workflows/pages/badge.svg)](https://ayoubhry.github.io/emulator-gba-web/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)](#)
+[![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)](#)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)](#)
 
-> Propulsé par [EmulatorJS](https://emulatorjs.org/) & le cœur **mGBA WebAssembly**.
+Un émulateur **Game Boy Advance** au design moderne tournant entièrement dans le navigateur, hébergé de manière sécurisée sur GitHub Pages. Il charge automatiquement une ROM par défaut dès l'ouverture de la page — **sans installation, sans plugin**.
+
+> 🚀 **[JOUER MAINTENANT (Live Demo)](https://ayoubhry.github.io/emulator-gba-web/)**
+
+Propulsé par [EmulatorJS](https://emulatorjs.org/) et le cœur d'émulation **mGBA WebAssembly**.
 
 ---
 
 ## ✨ Fonctionnalités
 
-- ⚡ **Chargement automatique** — la ROM démarre sans aucun clic
-- 🕹️ **Console GBA fidèle** — rendu CSS pixel-perfect avec gâchettes L/R, croix directionnelle et boutons A/B
-- 💾 **Sauvegardes et chargements d'état** intégrés via EmulatorJS
-- 📸 **Screenshot** en un clic
-- 🎮 **Support manette** (Gamepad API)
-- 🔄 **Changer de jeu** — glisser-déposer n'importe quelle ROM `.gba` pour la remplacer à la volée
-- 📱 **Responsive** — s'adapte aux petits écrans
+* ⚡ **Chargement Automatique :** Le jeu (par défaut *Pokémon Version Émeraude*) démarre instantanément sans aucune action requise.
+* 🕹️ **Design Pixel-Perfect :** Une interface en CSS pur modélisant fidèlement la console GBA (croix directionnelle, boutons A/B, gâchettes L/R, indicateur LED).
+* 🔄 **Changement de ROM à la volée :** Glissez-déposez n'importe quel fichier `.gba`, `.zip` ou `.7z` dans la zone dédiée pour changer de jeu instantanément.
+* 💾 **Sauvegardes Intégrées :** Gestion des *Save States* (sauvegardes d'état) directement via l'interface d'EmulatorJS.
+* 🎮 **Support Manette :** Compatible nativement avec l'API Gamepad des navigateurs.
+* 📱 **Responsive Design :** S'adapte intelligemment aux petits comme aux grands écrans.
 
 ---
 
-## 🗂️ Structure du projet
+## ⌨️ Contrôles par défaut (Clavier)
 
-```
-📁 GBA Web/
-├── 📄 index.html          # Interface principale (console GBA en CSS)
-├── 🎨 style.css           # Design system & modélisation de la console
-├── ⚙️  script.js           # Logique d'émulation & chargement automatique
-└── 📁 Roms/
-    └── 🎮 Pokemon - Version Emeraude.gba   ← ROM chargée au démarrage
-```
+Les touches sont mappées pour une utilisation optimale sur clavier (disposition AZERTY). 
 
----
-
-## 🚀 Déploiement sur GitHub Pages
-
-### 1. Forker / Cloner le dépôt
-
-```bash
-git clone https://github.com/VOTRE-USERNAME/gba-web-emulator.git
-cd gba-web-emulator
-```
-
-### 2. Ajouter votre ROM
-
-Placez votre fichier ROM dans le dossier `Roms/` :
-
-```bash
-Roms/Pokemon - Version Emeraude.gba
-```
-
-> ⚠️ Le nom du fichier doit correspondre **exactement** à la valeur `AUTO_ROM.path` dans `script.js`.
-
-Pour utiliser une ROM différente, modifiez ces deux lignes dans `script.js` :
-
-```js
-const AUTO_ROM = {
-  path: 'Roms/Mon-Jeu.gba',   // ← chemin relatif vers votre ROM
-  name: 'Mon Jeu GBA',        // ← nom affiché dans l'interface
-};
-```
-
-### 3. Pousser sur GitHub
-
-```bash
-git add .
-git commit -m "Initial commit"
-git push origin main
-```
-
-### 4. Activer GitHub Pages
-
-1. Allez dans **Settings** → **Pages**
-2. Source : `Deploy from a branch`
-3. Branch : `main` / `root`
-4. Cliquez **Save**
-
-Votre site sera disponible à l'adresse :
-`https://VOTRE-USERNAME.github.io/gba-web-emulator/`
-
-> 💡 **Fichiers volumineux** : les ROMs GBA font généralement 16–32 Mo. GitHub accepte jusqu'à 100 Mo par fichier. Au-delà de 50 Mo, activez **Git LFS** :
-> ```bash
-> git lfs install
-> git lfs track "*.gba"
-> git add .gitattributes
-> ```
-
----
-
-## 🖥️ Tester en local
-
-`fetch()` est bloqué par le navigateur en protocole `file://`. Utilisez un **serveur HTTP local** :
-
-| Méthode | Commande |
-|---|---|
-| **VS Code** | Clic droit sur `index.html` → *Open with Live Server* |
-| **Node.js** | `npx serve .` |
-| **Python 3** | `python -m http.server 8080` |
-
-Puis ouvrez `http://localhost:3000` (ou `8080` selon la méthode).
-
-> En `file://`, la section **"Changer de jeu"** s'ouvre automatiquement pour vous permettre de sélectionner la ROM manuellement pendant vos tests.
-
----
-
-## ⌨️ Contrôles clavier
-
-| Bouton console | Touche |
-|---|---|
-| Croix ↑ ↓ ← → | `Z` `S` `Q` `D` |
-| Bouton **A** | `L` |
-| Bouton **B** | `M` |
-| Gâchette **L** | `I` |
-| Gâchette **R** | `P` |
+| Action Console | Touche Clavier |
+| :--- | :--- |
+| **Croix Directionnelle** (↑ ↓ ← →) | `Z` `S` `Q` `D` |
+| **Bouton A** | `L` |
+| **Bouton B** | `M` |
+| **Gâchette L** | `I` |
+| **Gâchette R** | `P` |
 | **START** | `Entrée ↵` |
-| **SELECT** | `Maj ⇧` |
-| Plein écran | `F11` |
+| **SELECT** | `Maj ⇧` (Shift) |
+| **Plein écran / Menu Émulateur** | Géré par l'UI EmulatorJS (Barre de contrôle) |
 
-Les contrôles sont reconfigurables directement dans l'interface EmulatorJS (bouton ⚙️ dans la barre de l'émulateur).
-
----
-
-## 🛠️ Technologies
-
-| Outil | Rôle |
-|---|---|
-| [EmulatorJS](https://emulatorjs.org/) | Framework d'émulation web |
-| [mGBA](https://mgba.io/) | Cœur d'émulation GBA (compilé en WebAssembly) |
-| HTML / CSS / JS natif | Interface & logique — zéro dépendance |
-| GitHub Pages | Hébergement statique gratuit |
+> 💡 *Note : Les contrôles peuvent être reconfigurés à tout moment via l'icône de manette dans le menu inférieur de l'émulateur.*
 
 ---
 
-## ⚖️ Avertissement légal
+## 🛠️ Installation & Utilisation en Local
 
-Ce projet ne distribue, ne télécharge et ne contient **aucun jeu protégé par copyright**.
+Si vous souhaitez forker le projet [ayoubhry/emulator-gba-web](https://github.com/ayoubhry/emulator-gba-web) et l'exécuter sur votre propre machine :
 
-La ROM utilisée doit être obtenue légalement — par exemple en extrayant vous-même la cartouche physique dont vous êtes propriétaire. L'auteur de ce projet décline toute responsabilité quant à l'utilisation de ROMs obtenues illégalement.
-
----
-
-## 📄 Licence
-
-Ce projet est distribué sous licence **MIT**.
-EmulatorJS est distribué sous sa propre licence — voir [emulatorjs.org](https://emulatorjs.org/).
+### 1. Cloner le dépôt
+```bash
+git clone [https://github.com/ayoubhry/emulator-gba-web.git](https://github.com/ayoubhry/emulator-gba-web.git)
+cd emulator-gba-web
