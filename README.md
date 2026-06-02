@@ -1,4 +1,4 @@
-# 🎮 GBA Web Emulator — Next Gen
+# 🎮 GameBoy Advance - Web Emulator
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-live-00c8ff?style=flat-square&logo=github)](https://ayoubhry.github.io/emulator-gba-web/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
