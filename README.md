@@ -52,7 +52,7 @@ Si vous souhaitez forker le projet [ayoubhry/emulator-gba-web](https://github.co
 ```bash
 git clone [https://github.com/ayoubhry/emulator-gba-web.git](https://github.com/ayoubhry/emulator-gba-web.git)
 cd emulator-gba-web
-
+```
 
 ---
 
