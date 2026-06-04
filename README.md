@@ -52,3 +52,17 @@ Si vous souhaitez forker le projet [ayoubhry/emulator-gba-web](https://github.co
 ```bash
 git clone [https://github.com/ayoubhry/emulator-gba-web.git](https://github.com/ayoubhry/emulator-gba-web.git)
 cd emulator-gba-web
+
+
+---
+
+
+## 📦 Collection complète
+
+| Console | Dépôt | Démo |
+|----------|----------|----------|
+| GBA | [emulator-gba-web](https://github.com/ayoubhry/emulator-gba-web) | [🎮 Jouer](https://ayoubhry.github.io/emulator-gba-web/) |
+| SNES | [emulator-snes-web](https://github.com/ayoubhry/emulator-snes-web) | [🎮 Jouer](https://ayoubhry.github.io/emulator-snes-web/) |
+| PSP | [emulator-psp-web](https://github.com/ayoubhry/emulator-psp-web) | [🎮 Jouer](https://ayoubhry.github.io/emulator-psp-web/) |
+| N64 | [emulator-n64-web](https://github.com/ayoubhry/emulator-n64-web) | [🎮 Jouer](https://ayoubhry.github.io/emulator-n64-web/) |
+
