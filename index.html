@@ -2,24 +2,14 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GBA Web Emulator — Next Gen</title>
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+  <title>GBA Web Emulator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Press+Start+2P&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <div id="overlay">
-    <div class="ov-content">
-      <div class="spinner"></div>
-      <div class="ov-title">BOOTING CORE</div>
-      <div class="ov-sub">Initialisation du noyau mGBA (WebAssembly)...</div>
-    </div>
-  </div>
 
   <header>
     <div class="brand">GBA<span class="gradient-text">.core</span></div>
@@ -29,106 +19,81 @@
   </header>
 
   <main class="container">
-    
+
     <section class="emulator-section">
       <div class="gba-wrapper">
         <div class="gba-shadow-glow"></div>
-        
-        <div class="gba-console">
-          
-          <div class="shoulder l-shoulder" id="key-l"><span>L</span></div>
-          <div class="shoulder r-shoulder" id="key-r"><span>R</span></div>
 
-          <div class="gba-inner-body">
-            
-            <div class="gba-left">
-              <div class="dpad">
-                <div class="dpad-axis dpad-h" id="key-hl"></div>
-                <div class="dpad-axis dpad-v" id="key-vu"></div>
-                <div class="dpad-center"></div>
+        <!-- Console photo -->
+        <div class="gba-photo-console" id="gba-console">
+          <img src="GBA_Background.png" alt="Game Boy Advance" class="gba-photo-img" id="gba-img"/>
+
+          <!-- Écran émulateur -->
+          <div class="screen-overlay" id="screen-overlay">
+            <div id="emulator-container"></div>
+            <div id="idle-screen">
+              <div class="retro-logo">
+                <span class="c-g">G</span><span class="c-a">A</span><span class="c-m">M</span><span class="c-e">E</span> <span>BOY</span>
+                <div class="sub-logo">ADVANCE</div>
               </div>
-              <div class="label-hint">Z Q S D</div>
-            </div>
-
-            <div class="gba-center">
-              <div class="screen-frame">
-                <div class="screen-header">
-                  <div class="power-indicator">
-                    <div class="led" id="power-led"></div>
-                    <span>POWER</span>
-                  </div>
-                  <div class="screen-logo">GAME BOY ADVANCE</div>
-                </div>
-                <!-- CORRECTION : id="game" supprimé, on garde id="emulator-container"
-                     que script.js cible via EJS_player = '#emulator-container' -->
-                <div class="screen-display" id="screen">
-                  <div id="emulator-container"></div>
-                  <div id="idle-screen">
-                    <div class="retro-logo">
-                      <span class="c-g">G</span><span class="c-a">A</span><span class="c-m">M</span><span class="c-e">E</span> <span>BOY</span>
-                      <div class="sub-logo">ADVANCE</div>
-                    </div>
-                    <p class="blink-text">Veuillez insérer une ROM</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="gba-right">
-              <div class="action-buttons">
-                <div class="btn-container">
-                  <button class="btn-action b-btn" id="key-b">B</button>
-                  <span class="label-hint">[M]</span>
-                </div>
-                <div class="btn-container">
-                  <button class="btn-action a-btn" id="key-a">A</button>
-                  <span class="label-hint">[L]</span>
-                </div>
-              </div>
-              
-              <div class="speaker-grille">
-                <span></span><span></span><span></span><span></span>
-              </div>
-            </div>
-
-          </div>
-
-          <div class="gba-bottom-controls">
-            <div class="meta-btn-group">
-              <button class="btn-meta" id="key-sel"></button>
-              <span class="meta-label">SELECT <span class="hint">[Maj]</span></span>
-            </div>
-            <div class="meta-btn-group">
-              <button class="btn-meta" id="key-st"></button>
-              <span class="meta-label">START <span class="hint">[Entrée]</span></span>
+              <p class="blink-text">Veuillez insérer une ROM</p>
             </div>
           </div>
 
-        </div>
+          <!-- ══════════════════════════════════════
+               CONTRÔLES TACTILES MOBILES
+               Positionnés en % sur la photo GBA
+               ══════════════════════════════════════ -->
+
+          <!-- Croix directionnelle -->
+          <div class="touch-zone dpad-zone" id="dpad-zone">
+            <div class="dpad-btn dpad-up"   data-key="ArrowUp"   ></div>
+            <div class="dpad-btn dpad-down" data-key="ArrowDown" ></div>
+            <div class="dpad-btn dpad-left" data-key="ArrowLeft" ></div>
+            <div class="dpad-btn dpad-right"data-key="ArrowRight"></div>
+            <div class="dpad-center-dot"></div>
+          </div>
+
+          <!-- Bouton A -->
+          <div class="touch-btn btn-a-touch" data-key="k" id="touch-a">A</div>
+
+          <!-- Bouton B -->
+          <div class="touch-btn btn-b-touch" data-key="m" id="touch-b">B</div>
+
+          <!-- Bouton L (gâchette gauche) -->
+          <div class="touch-btn btn-l-touch" data-key="i" id="touch-l">L</div>
+
+          <!-- Bouton R (gâchette droite) -->
+          <div class="touch-btn btn-r-touch" data-key="p" id="touch-r">R</div>
+
+          <!-- SELECT -->
+          <div class="touch-btn btn-sel-touch" data-key="Shift" id="touch-sel">SEL</div>
+
+          <!-- START -->
+          <div class="touch-btn btn-st-touch" data-key="Enter" id="touch-st">STA</div>
+
+        </div><!-- fin gba-photo-console -->
       </div>
     </section>
 
     <section class="dashboard-grid">
-      
+
       <div class="card upload-card">
         <div class="card-header">
           <div class="card-icon">🟢</div>
           <h3>Jeu chargé automatiquement</h3>
         </div>
-        <p class="card-desc">La ROM <strong>Pokémon — Version Émeraude</strong> est injectée automatiquement depuis <code>Roms/</code> dès l'ouverture de la page — aucune action requise.</p>
-
-        <div class="file-status" id="rom-info" style="margin-bottom: 1.25rem;">
+        <p class="card-desc">La ROM <strong>Pokémon — Version Émeraude</strong> est injectée automatiquement dès l'ouverture de la page.</p>
+        <div class="file-status" id="rom-info" style="margin-bottom:1.25rem;">
           <div class="file-details">
             <span class="file-icon">🎮</span>
             <span class="file-name" id="rom-name">Initialisation…</span>
           </div>
-          <!-- CORRECTION : id="btn-relancer" ajouté pour que script.js puisse le cibler -->
           <button class="btn-primary" id="btn-relancer">↺ Relancer</button>
         </div>
-
         <details>
           <summary class="change-rom-summary">Changer de jeu (optionnel)</summary>
-          <div class="drop-zone" id="drop-zone" style="margin-top: 0.75rem;">
+          <div class="drop-zone" id="drop-zone" style="margin-top:0.75rem;">
             <input type="file" id="rom-input" accept=".gba,.zip,.7z"/>
             <div class="drop-zone-content">
               <span class="upload-icon">⚡</span>
@@ -144,15 +109,13 @@
           <div class="card-icon">⌨</div>
           <h3>Configuration Clavier</h3>
         </div>
-        <p class="card-desc">Les touches matérielles de la console sont mappées par défaut selon la configuration ci-dessous :</p>
-        
+        <p class="card-desc">Contrôles clavier par défaut :</p>
         <div class="controls-list">
-          <div class="control-row"><span>Croix directionnelle</span> <kbd>Z</kbd> <kbd>Q</kbd> <kbd>S</kbd> <kbd>D</kbd></div>
-          <div class="control-row"><span>Bouton Action A</span> <kbd>L</kbd></div>
-          <div class="control-row"><span>Bouton Action B</span> <kbd>M</kbd></div>
-          <div class="control-row"><span>Gâchettes Hautes (L / R)</span> <kbd>I</kbd> / <kbd>P</kbd></div>
+          <div class="control-row"><span>Croix directionnelle</span> <kbd>Z</kbd><kbd>Q</kbd><kbd>S</kbd><kbd>D</kbd></div>
+          <div class="control-row"><span>Bouton A</span> <kbd>K</kbd></div>
+          <div class="control-row"><span>Bouton B</span> <kbd>M</kbd></div>
+          <div class="control-row"><span>Gâchettes L / R</span> <kbd>I</kbd> / <kbd>P</kbd></div>
           <div class="control-row"><span>START / SELECT</span> <kbd>Entrée ↵</kbd> / <kbd>Maj ⇧</kbd></div>
-          <div class="control-row"><span>Plein écran Émulateur</span> <kbd>F11</kbd></div>
         </div>
       </div>
 
@@ -161,18 +124,11 @@
 
   <footer>
     <div class="footer-content">
-      <p>© 2026 GBA Web Emulator — Hébergé de manière sécurisée sur GitHub Pages</p>
-      <p class="sub-footer">Propulsé par EmulatorJS & mGBA WebAssembly Architecture</p>
+      <p>© 2026 GBA Web Emulator</p>
+      <p class="sub-footer">Propulsé par EmulatorJS & mGBA WebAssembly</p>
     </div>
   </footer>
 
-  <!--
-    CORRECTION CRITIQUE :
-    - Le loader.js statique est RETIRÉ d'ici.
-    - script.js l'injecte dynamiquement APRÈS avoir défini toutes les variables EJS_*
-    - Cela garantit qu'EmulatorJS lit bien la config au moment de son chargement.
-    - script.js est chargé en "defer" pour avoir accès au DOM complet.
-  -->
   <script src="script.js" defer></script>
 </body>
 </html>
