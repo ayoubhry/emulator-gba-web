@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
-  <title>GBA Web Emulator</title>
+  <title>SNES Web Emulator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Press+Start+2P&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
 <body>
 
   <header>
-    <div class="brand">GBA<span class="gradient-text">.core</span></div>
+    <div class="brand">SNES<span class="gradient-text">.core</span></div>
     <nav>
       <span class="status-badge"><span class="dot live"></span> System Ready</span>
     </nav>
@@ -21,58 +21,26 @@
   <main class="container">
 
     <section class="emulator-section">
-      <div class="gba-wrapper">
-        <div class="gba-shadow-glow"></div>
+      <div class="snes-wrapper">
+        <div class="snes-shadow-glow"></div>
 
-        <!-- Console photo -->
-        <div class="gba-photo-console" id="gba-console">
-          <img src="GBA_Background.png" alt="Game Boy Advance" class="gba-photo-img" id="gba-img"/>
+        <!-- Photo de la console -->
+        <div class="snes-photo-console" id="snes-console">
+          <img src="SNES_Background.png" alt="Super Nintendo Entertainment System" class="snes-photo-img" id="snes-img"/>
 
-          <!-- Écran émulateur -->
+          <!-- Écran émulateur superposé sur l'écran TV -->
           <div class="screen-overlay" id="screen-overlay">
             <div id="emulator-container"></div>
             <div id="idle-screen">
               <div class="retro-logo">
-                <span class="c-g">G</span><span class="c-a">A</span><span class="c-m">M</span><span class="c-e">E</span> <span>BOY</span>
-                <div class="sub-logo">ADVANCE</div>
+                <span class="c-s">S</span><span class="c-n">N</span><span class="c-e">E</span><span class="c-s2">S</span>
+                <div class="sub-logo">SUPER NINTENDO</div>
               </div>
               <p class="blink-text">Veuillez insérer une ROM</p>
             </div>
           </div>
 
-          <!-- ══════════════════════════════════════
-               CONTRÔLES TACTILES MOBILES
-               Positionnés en % sur la photo GBA
-               ══════════════════════════════════════ -->
-
-          <!-- Croix directionnelle -->
-          <div class="touch-zone dpad-zone" id="dpad-zone">
-            <div class="dpad-btn dpad-up"   data-key="ArrowUp"   ></div>
-            <div class="dpad-btn dpad-down" data-key="ArrowDown" ></div>
-            <div class="dpad-btn dpad-left" data-key="ArrowLeft" ></div>
-            <div class="dpad-btn dpad-right"data-key="ArrowRight"></div>
-            <div class="dpad-center-dot"></div>
-          </div>
-
-          <!-- Bouton A -->
-          <div class="touch-btn btn-a-touch" data-key="k" id="touch-a">A</div>
-
-          <!-- Bouton B -->
-          <div class="touch-btn btn-b-touch" data-key="m" id="touch-b">B</div>
-
-          <!-- Bouton L (gâchette gauche) -->
-          <div class="touch-btn btn-l-touch" data-key="i" id="touch-l">L</div>
-
-          <!-- Bouton R (gâchette droite) -->
-          <div class="touch-btn btn-r-touch" data-key="p" id="touch-r">R</div>
-
-          <!-- SELECT -->
-          <div class="touch-btn btn-sel-touch" data-key="Shift" id="touch-sel">SEL</div>
-
-          <!-- START -->
-          <div class="touch-btn btn-st-touch" data-key="Enter" id="touch-st">STA</div>
-
-        </div><!-- fin gba-photo-console -->
+        </div><!-- fin snes-photo-console -->
       </div>
     </section>
 
@@ -80,31 +48,28 @@
 
       <div class="card upload-card">
         <div class="card-header">
-          <div class="card-icon">🟢</div>
-          <h3>Jeu chargé automatiquement</h3>
+          <div class="card-icon">🎮</div>
+          <h3>Charger un jeu</h3>
         </div>
-        <p class="card-desc">La ROM <strong>Pokémon — Version Émeraude</strong> est injectée automatiquement dès l'ouverture de la page.</p>
+        <p class="card-desc">Chargez votre ROM <strong>.sfc</strong> ou <strong>.smc</strong> pour commencer à jouer sur la Super Nintendo.</p>
         <div class="file-status" id="rom-info" style="margin-bottom:1.25rem;">
           <div class="file-details">
-            <span class="file-icon">🎮</span>
-            <span class="file-name" id="rom-name">Initialisation…</span>
+            <span class="file-icon">🕹️</span>
+            <span class="file-name" id="rom-name">Aucun jeu chargé</span>
           </div>
           <button class="btn-primary" id="btn-relancer">↺ Relancer</button>
         </div>
-        <details>
-          <summary class="change-rom-summary">Changer de jeu (optionnel)</summary>
-          <div class="drop-zone" id="drop-zone" style="margin-top:0.75rem;">
-            <input type="file" id="rom-input" accept=".gba,.zip,.7z"/>
-            <div class="drop-zone-content">
-              <span class="upload-icon">⚡</span>
-              <p>Déposer un fichier <span class="highlight">.gba</span> ou <span class="highlight">.zip</span></p>
-              <span class="sub-drop">Ou cliquez pour explorer vos fichiers</span>
-            </div>
+        <div class="drop-zone" id="drop-zone">
+          <input type="file" id="rom-input" accept=".sfc,.smc,.zip"/>
+          <div class="drop-zone-content">
+            <span class="upload-icon">⚡</span>
+            <p>Déposer un fichier <span class="highlight">.sfc</span> ou <span class="highlight">.smc</span></p>
+            <span class="sub-drop">Ou cliquez pour explorer vos fichiers</span>
           </div>
-        </details>
+        </div>
       </div>
 
-      <div class="card Controls-card">
+      <div class="card controls-card">
         <div class="card-header">
           <div class="card-icon">⌨</div>
           <h3>Configuration Clavier</h3>
@@ -112,9 +77,9 @@
         <p class="card-desc">Contrôles clavier par défaut :</p>
         <div class="controls-list">
           <div class="control-row"><span>Croix directionnelle</span> <kbd>Z</kbd><kbd>Q</kbd><kbd>S</kbd><kbd>D</kbd></div>
-          <div class="control-row"><span>Bouton A</span> <kbd>K</kbd></div>
-          <div class="control-row"><span>Bouton B</span> <kbd>M</kbd></div>
-          <div class="control-row"><span>Gâchettes L / R</span> <kbd>I</kbd> / <kbd>P</kbd></div>
+          <div class="control-row"><span>Bouton B / A</span> <kbd>M</kbd> / <kbd>K</kbd></div>
+          <div class="control-row"><span>Bouton Y / X</span> <kbd>J</kbd> / <kbd>I</kbd></div>
+          <div class="control-row"><span>Gâchettes L / R</span> <kbd>U</kbd> / <kbd>O</kbd></div>
           <div class="control-row"><span>START / SELECT</span> <kbd>Entrée ↵</kbd> / <kbd>Maj ⇧</kbd></div>
         </div>
       </div>
@@ -124,8 +89,8 @@
 
   <footer>
     <div class="footer-content">
-      <p>© 2026 GBA Web Emulator</p>
-      <p class="sub-footer">Propulsé par EmulatorJS & mGBA WebAssembly</p>
+      <p>© 2026 SNES Web Emulator</p>
+      <p class="sub-footer">Propulsé par EmulatorJS & Snes9x WebAssembly</p>
     </div>
   </footer>
 
